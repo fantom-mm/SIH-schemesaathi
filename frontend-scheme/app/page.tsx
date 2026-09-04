@@ -357,23 +357,29 @@ export default function SchemeSaathiPage() {
         | ranking and allocation.
         |
         */
+// Replace the axios.post call in app/page.tsx with this:
 
-        const response = await axios.post(
-          `${BACKEND_URL}/chat`,
-          {
-            message,
-            user_id: 'guest',
-            ps_type: 'scheme',
-            language,
-            language_name: currentLanguage.name,
-          },
-          {
-            timeout: 15000,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+const response = await axios.post(
+  `${BACKEND_URL}/chat`,
+  {
+    message,
+    // Pass full message history including the new user message
+    messages: [...messages, userMessage].map((m) => ({
+      role: m.role,
+      content: m.content,
+    })),
+    user_id: 'guest',
+    ps_type: 'scheme',
+    language,
+    language_name: currentLanguage.name,
+  },
+  {
+    timeout: 60000,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }
+);
 
         const answer =
           response.data?.response ??
